@@ -86,5 +86,4 @@ public class StraferTeleOP extends LinearOpMode{
                 motorBackRight.setPower(backRightPower);
                 armMotor.setPower(armPower);
             }
-
         }}}
