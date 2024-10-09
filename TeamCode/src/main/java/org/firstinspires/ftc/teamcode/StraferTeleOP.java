@@ -36,7 +36,7 @@ public class StraferTeleOP extends LinearOpMode{
             double rx = gamepad1.right_stick_x;
 
             //Arm Control
-            double armPowerLimit = 0.75;
+            double armPowerLimit = 0.9; //Still need to be tested
             double armPower = -gamepad2.right_stick_y * armPowerLimit;
 
             //Arm Positions
