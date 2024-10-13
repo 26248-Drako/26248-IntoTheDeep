@@ -47,13 +47,13 @@ public class StraferTeleOP extends LinearOpMode{
             int upperPosition = 1000;
 
             //Arm Control
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 armMotor.setTargetPosition(lowerPosition);
                 armMotor.setPower(0.5);
-            } else if (gamepad2.b) {
+            } else if (gamepad1.b) {
                 armMotor.setTargetPosition(middlePosition);
                 armMotor.setPower(0.5);
-            } else if (gamepad2.y) {
+            } else if (gamepad1.y) {
                 armMotor.setTargetPosition(upperPosition);
                 armMotor.setPower(0.5);
             }
@@ -66,13 +66,12 @@ public class StraferTeleOP extends LinearOpMode{
             double backRightPower = (y + x - rx) / denominator;
 
             if (gamepad2.a) {
-                clawLeftMotor.setPosition(0.5);
-                clawRightMotor.setPosition(0.5);
-            } else if (gamepad2.b) {
-                clawLeftMotor.setPosition(0.0);
-                clawRightMotor.setPosition(0.0);
-            } else {
-                ;
+                clawLeftMotor.setPosition(clawLeftMotor.getPosition()+0.1);
+                clawRightMotor.setPosition(clawRightMotor.getPosition()+0.1);
+            }
+            else if (gamepad2.b) {
+                clawLeftMotor.setPosition(clawLeftMotor.getPosition()-0.1);
+                clawRightMotor.setPosition(clawRightMotor.getPosition()-0.1);
             }
 
             //SecuritySwitch
