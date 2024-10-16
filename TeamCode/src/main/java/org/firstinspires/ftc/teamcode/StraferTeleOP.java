@@ -22,6 +22,8 @@ public class StraferTeleOP extends LinearOpMode{
         //Set the Direction of the Motors
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         clawRightMotor.setDirection(Servo.Direction.REVERSE);
