@@ -22,8 +22,6 @@ public class StraferTeleOP extends LinearOpMode{
         //Set the Direction of the Motors
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         clawRightMotor.setDirection(Servo.Direction.REVERSE);
@@ -31,6 +29,13 @@ public class StraferTeleOP extends LinearOpMode{
         waitForStart();
 
         if(isStopRequested()) return;
+
+        // Variables for smooth movement
+        double prevFrontLeftPower = 0;
+        double prevFrontRightPower = 0;
+        double prevBackLeftPower = 0;
+        double prevBackRightPower = 0;
+        double smoothingFactor = 0.2; // Adjust for more or less smoothing
 
         //Run the OpMode
         while(opModeIsActive()) {
@@ -42,51 +47,49 @@ public class StraferTeleOP extends LinearOpMode{
             //Arm Control
             double armPower = gamepad2.right_stick_y;
 
-            //Arm Positions
-            int lowerPosition = 0;
-            int middlePosition = 500;
-            int upperPosition = 1000;
-            double armLimit = 0.9;
-
-            //Arm Control
-            if (gamepad1.a) {
-                armMotor.setTargetPosition(lowerPosition);
-                armMotor.setPower(0.5);
-            } else if (gamepad1.b) {
-                armMotor.setTargetPosition(middlePosition);
-                armMotor.setPower(0.5);
-            } else if (gamepad1.y) {
-                armMotor.setTargetPosition(upperPosition);
-                armMotor.setPower(0.5);
-            }
-
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator * 0.85;
-            double frontRightPower = (y - x - rx) / denominator * 0.85;
-            double backLeftPower = (y - x + rx) / denominator * 0.85;
-            double backRightPower = (y + x - rx) / denominator * 0.85;
+            double targetFrontLeftPower = (y + x + rx) / denominator * 0.925;
+            double targetFrontRightPower = (y - x - rx) / denominator * 0.925;
+            double targetBackLeftPower = (y - x + rx) / denominator * 0.925;
+            double targetBackRightPower = (y + x - rx) / denominator * 0.925;
+
+            // Apply smoothing to motor powers
+            double frontLeftPower = prevFrontLeftPower + (targetFrontLeftPower - prevFrontLeftPower) * smoothingFactor;
+            double frontRightPower = prevFrontRightPower + (targetFrontRightPower - prevFrontRightPower) * smoothingFactor;
+            double backLeftPower = prevBackLeftPower + (targetBackLeftPower - prevBackLeftPower) * smoothingFactor;
+            double backRightPower = prevBackRightPower + (targetBackRightPower - prevBackRightPower) * smoothingFactor;
+
+            // Update previous power values
+            prevFrontLeftPower = frontLeftPower;
+            prevFrontRightPower = frontRightPower;
+            prevBackLeftPower = backLeftPower;
+            prevBackRightPower = backRightPower;
+
+            // Claw Control with Position Limits
+            double clawLeftPosition = clawLeftMotor.getPosition();
+            double clawRightPosition = clawRightMotor.getPosition();
 
             if (gamepad2.a) {
-                clawLeftMotor.setPosition(clawLeftMotor.getPosition() + 0.1);
-                clawRightMotor.setPosition(clawRightMotor.getPosition() + 0.1);
+                clawLeftMotor.setPosition(Math.min(clawLeftPosition + 0.1, 1.0));
+                clawRightMotor.setPosition(Math.min(clawRightPosition + 0.1, 1.0));
             }
             else if (gamepad2.b) {
-                clawLeftMotor.setPosition(clawLeftMotor.getPosition() - 0.1);
-                clawRightMotor.setPosition(clawRightMotor.getPosition() - 0.1);
+                clawLeftMotor.setPosition(Math.max(clawLeftPosition - 0.1, 0.0));
+                clawRightMotor.setPosition(Math.max(clawRightPosition - 0.1, 0.0));
             }
 
-            //SecuritySwitch
+            // SecuritySwitch
             if (gamepad2.left_trigger > 0.1 || gamepad2.right_trigger > 0.1 || gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1) {
                 motorFrontLeft.setPower(0);
                 motorFrontRight.setPower(0);
                 motorBackLeft.setPower(0);
                 motorBackRight.setPower(0);
             } else {
-                motorFrontLeft.setPower(frontLeftPower);
-                motorFrontRight.setPower(frontRightPower);
-                motorBackLeft.setPower(backLeftPower);
-                motorBackRight.setPower(backRightPower);
-                armMotor.setPower(armPower*armLimit);
+                motorFrontLeft.setPower(frontLeftPower*0.8);
+                motorFrontRight.setPower(frontRightPower*0.8);
+                motorBackLeft.setPower(backLeftPower*0.8);
+                motorBackRight.setPower(backRightPower*0.8);
+                armMotor.setPower(armPower*0.9);
             }
         }
     }
