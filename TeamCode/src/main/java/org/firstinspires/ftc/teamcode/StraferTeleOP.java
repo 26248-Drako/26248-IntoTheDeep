@@ -90,11 +90,18 @@ public class StraferTeleOP extends LinearOpMode{
                 motorBackLeft.setPower(0);
                 motorBackRight.setPower(0);
             } else {
-                motorFrontLeft.setPower(frontLeftPower*0.8);
-                motorFrontRight.setPower(frontRightPower*0.8);
-                motorBackLeft.setPower(backLeftPower*0.8);
-                motorBackRight.setPower(backRightPower*0.8);
-                armMotor.setPower(armPower*0.9);
+                if (moveSwitch) {
+                    motorFrontLeft.setPower(-backRightPower * 0.8);
+                    motorFrontRight.setPower(-backLeftPower * 0.8);
+                    motorBackLeft.setPower(-frontRightPower * 0.8);
+                    motorBackRight.setPower(-frontLeftPower * 0.8);
+                } else {
+                    motorFrontLeft.setPower(frontLeftPower * 0.8);
+                    motorFrontRight.setPower(frontRightPower * 0.8);
+                    motorBackLeft.setPower(backLeftPower * 0.8);
+                    motorBackRight.setPower(backRightPower * 0.8);
+                }
+                armMotor.setPower(armPower * 0.9);
             }
         }
     }
