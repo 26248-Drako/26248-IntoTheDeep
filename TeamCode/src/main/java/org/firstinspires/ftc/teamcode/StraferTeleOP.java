@@ -36,6 +36,7 @@ public class StraferTeleOP extends LinearOpMode{
         double prevBackLeftPower = 0;
         double prevBackRightPower = 0;
         double smoothingFactor = 0.2; // Adjust for more or less smoothing
+        boolean moveSwitch = false;
 
         //Run the OpMode
         while(opModeIsActive()) {
@@ -76,6 +77,10 @@ public class StraferTeleOP extends LinearOpMode{
             else if (gamepad2.b) {
                 clawLeftMotor.setPosition(Math.max(clawLeftPosition - 0.1, 0.0));
                 clawRightMotor.setPosition(Math.max(clawRightPosition - 0.1, 0.0));
+            }
+
+            if(gamepad1.left_bumper||gamepad1.right_bumper){
+                moveSwitch = !moveSwitch;
             }
 
             // SecuritySwitch
